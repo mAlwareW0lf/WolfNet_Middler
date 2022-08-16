@@ -14,6 +14,10 @@ SOCKADDR_IN addr;
 HANDLE hThread, hThreadB, hThreadC;
 DWORD IDThread;
 DWORD WINAPI reconnect0(LPVOID d);
+
+int hr;
+
+char msg[40];
 int s = sizeof(addr);
 
 void Wsa()
@@ -40,10 +44,11 @@ void listen()
 
 DWORD WINAPI reces(LPVOID d);
 
+DWORD WINAPI setn(int i);
+
 DWORD WINAPI inff(LPVOID g)
 {
 
-	char msg[20] = " ";
 	char msg2[40] = " ";
 	string gg;
 	int d = 0;
@@ -55,7 +60,7 @@ DWORD WINAPI inff(LPVOID g)
 		cout << "2" << endl;
 		Sleep(1000);
 		recv(sock, msg2, sizeof(msg2), NULL);
-		cout << msg << 3 << endl;
+		cout << msg2 << 3 << endl;
 		Sleep(1000);
 		//memcpy(gg, msg2, sizeof(msg2));
 		gg = msg2;
@@ -77,7 +82,7 @@ DWORD WINAPI inff(LPVOID g)
 
 DWORD WINAPI reces(LPVOID d)
 {
-	int i = 1;
+	hr = 1;
 	string m;
 t7:
 	cout << "6" << endl;
@@ -98,26 +103,16 @@ t7:
 			
 			cout << "10" << endl;
 			Sleep(1000);
-			while (i <= 256)
+			while (hr <= 256)
 			{
-				cout << "11" << endl;
-				//Sleep(1000);
-				send(Con[i], msg, sizeof(msg), NULL);
-				cout << "12" << endl;
-				//Sleep(1000);
-				closesocket(Con[i]);
-				//Sleep(1000);
-				cout << "13" << endl;
-				//Sleep(1000);
+				send(Con[hr], msg, sizeof(msg), NULL);
+				closesocket(Con[hr]);
 				Sleep(100);
-				cout << "14" << endl;
-				//Sleep(1000);
-				i++;
-				cout << "15" << endl;
-				//Sleep(1000);
+				//hThreadC = CreateThread(NULL, NULL, inff, NULL, NULL, &IDThread);
+				hr++;
 			}	
-			
-			i = 1;
+			//CloseHandle(hThreadC);
+			hr = 1;
 			cout << "16" << endl;
 			Sleep(1000);
 			cout << "sent" << endl;
@@ -132,6 +127,12 @@ t7:
 
 
 
+DWORD WINAPI setn(LPVOID d)
+{
+
+	return 0;
+}
+
 int main()
 {
 	setlocale(LC_ALL, "russian");
@@ -144,6 +145,7 @@ int main()
 	
 	WaitForSingleObject(hThread, INFINITE);
 	WaitForSingleObject(hThreadB, INFINITE);
+	WaitForSingleObject(hThreadC, INFINITE);
 	//WaitForSingleObject(hThreadC, INFINITE);
 
 
